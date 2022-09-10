@@ -35,7 +35,7 @@ const signIn = async (req, res) => {
 
         const token = uuid()
 
-        db.collection('sessions').insertOne({ token, timestamp: Date.now(), userID: user._id })
+        db.collection('sessions').insertOne({ token, timestamp: Date.now(), walletId: user.walletId })
         res.status(200).send({token})
 
     } catch (error) {
@@ -63,7 +63,8 @@ const signUp = async (req, res) => {
         }
 
         const hash = await bcrypt.hash(password, 10)
-        db.collection('users').insertOne({ name, email, hash })
+        const { insertedId: walletId } = await db.collection('wallets').insertOne({ transactions: [] })
+        db.collection('users').insertOne({ name, email, hash, walletId })
         res.sendStatus(201)
 
 
