@@ -9,7 +9,7 @@ const addTransaction = async (req, res) => {
 
 
     if (!authorization || !type){
-        res.sendStatus(400)
+        res.sendStatus(401)
         return
     }
 
@@ -42,10 +42,10 @@ const addTransaction = async (req, res) => {
 
 const getTransactions = async (req, res) => {
     const { authorization } = req.headers
-    const token = authorization.replace('Bearer ', '')
+    const token = authorization?.replace('Bearer ', '')
 
     if (!authorization){
-        res.sendStatus(400)
+        res.sendStatus(401)
         return
     }
 

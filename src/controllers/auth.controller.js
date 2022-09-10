@@ -66,4 +66,29 @@ const signUp = async (req, res) => {
 }
 
 
-export { signIn, signUp }
+const signOut = async (req, res) => {
+    const { authorization } = req.headers
+    const token = authorization?.replace('Bearer ', '')
+
+    if (!authorization){
+        res.sendStatus(401)
+        return
+    }
+
+    try {
+        const session = await db.collection('sessions').findOne({ token })
+        if (!session){
+            res.sendStatus(400)
+            return
+        }
+
+        db.collection('sessions').deleteOne({ token })
+        res.sendStatus(200)
+
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
+
+export { signIn, signUp, signOut }
