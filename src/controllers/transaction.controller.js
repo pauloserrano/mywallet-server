@@ -1,6 +1,5 @@
 import { ObjectId } from 'mongodb'
 import db from '../database/mongo.js'
-import transactionSchema from '../models/transaction.schema.js'
 
 
 const addTransaction = async (req, res) => {
@@ -14,15 +13,14 @@ const addTransaction = async (req, res) => {
         return
     }
 
-    const validTransaction = transactionSchema.validate({ value, description })
-    if (validTransaction.error){
-        res.status(400).send(validTransaction.error.details)
-        return
-    }
-
     try {
         const session = await db.collection('sessions').findOne({ token })
-        console.log({ session })
+
+        if (!session){
+            res.sendStatus(404)
+            return
+        }
+
         const wallets = db.collection('wallets')
 
         const { transactions } = await wallets.findOne(
@@ -41,4 +39,28 @@ const addTransaction = async (req, res) => {
     }
 }
 
-export { addTransaction }
+
+const getTransactions = async (req, res) => {
+    const { authorization } = req.headers
+    const token = authorization.replace('Bearer ', '')
+
+    if (!authorization){
+        res.sendStatus(400)
+        return
+    }
+
+    try {
+        const session = await db.collection('sessions').findOne({ token })
+        const { transactions } = await db.collection('wallets').findOne(
+            { _id: ObjectId(session.walletId)}
+        )
+
+        res.send(transactions)
+
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
+
+export { addTransaction, getTransactions }

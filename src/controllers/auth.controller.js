@@ -2,7 +2,6 @@ import { ObjectId } from 'mongodb'
 import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcrypt'
 import db from '../database/mongo.js'
-import userSchema from '../models/user.schema.js'
 
 
 const signIn = async (req, res) => {
@@ -46,13 +45,6 @@ const signIn = async (req, res) => {
 
 const signUp = async (req, res) => {
     const { name, email, password } = req.body
-
-    const validUser = userSchema.validate({ name, email, password }, { abortEarly: false })
-    
-    if (validUser.error){
-        res.status(400).send(validUser.error.details)
-        return
-    }
 
     try {
         const emailIsUsed = await db.collection('users').findOne({ email })
