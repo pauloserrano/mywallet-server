@@ -1,13 +1,16 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import authRouter from './src/routes/auth.routes.js'
 
 
-const PORT = 5000
+dotenv.config()
+const PORT = process.env.PORT || 5000
 const app = express()
+
 app.use(express.json())
 app.use(cors())
-dotenv.config()
+app.use(authRouter)
 
 
 app.listen(PORT, () => `Magic happens on port ${PORT}`)
