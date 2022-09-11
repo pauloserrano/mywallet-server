@@ -25,10 +25,9 @@ const signIn = async (req, res) => {
             return
         }
 
-
-        const inSession = await db.collection('sessions').findOne({ userID: ObjectId(user._id)})
+        const inSession = await db.collection('sessions').findOne({ walletId: user.walletId})
         if (inSession){
-            await db.collection('sessions').deleteOne({ userID: ObjectId(user._id) })
+            await db.collection('sessions').deleteOne({ token: inSession.token })
         }
 
 
