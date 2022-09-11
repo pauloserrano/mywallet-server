@@ -2,7 +2,7 @@ import joi from "joi";
 
 const transactionSchema = joi.object({
     value: joi.number().required(),
-    description: joi.string()
+    description: joi.string().required()
 })
 
 

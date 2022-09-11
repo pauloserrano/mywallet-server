@@ -26,10 +26,12 @@ const addTransaction = async (req, res) => {
         const { transactions } = await wallets.findOne(
             {_id: ObjectId(session.walletId)}
         )
+        const now = new Date
+        const date = `${now.getDate()}/${now.getMonth() + 1}`
 
         wallets.updateOne(
             {_id: ObjectId(session.walletId)}, 
-            {$set: { transactions: [...transactions, { value, description, type }]}}
+            {$set: { transactions: [...transactions, { date, value, description, type }]}}
         )
 
         res.sendStatus(201)
@@ -51,6 +53,11 @@ const getTransactions = async (req, res) => {
 
     try {
         const session = await db.collection('sessions').findOne({ token })
+        if (!session){
+            res.sendStatus(422)
+            return
+        }
+
         const { transactions } = await db.collection('wallets').findOne(
             { _id: ObjectId(session.walletId)}
         )

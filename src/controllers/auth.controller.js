@@ -34,7 +34,7 @@ const signIn = async (req, res) => {
         const token = uuid()
 
         db.collection('sessions').insertOne({ token, timestamp: Date.now(), walletId: user.walletId })
-        res.status(200).send({token})
+        res.status(200).send({name: user.name, token})
 
     } catch (error) {
         res.status(500).send(error)
